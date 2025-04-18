@@ -2,6 +2,7 @@
   {
     "nom": "Spaghetti Carbonara",
     "categorie": "plat",
+    "imageUrl": "/images/recipes/Spaghetti Carbonara.png",
     "ingredients": [
       "200g spaghetti",
       "100g guanciale (ou pancetta)",
@@ -14,6 +15,7 @@
   {
     "nom": "Salade César",
     "categorie": "entrée",
+    "imageUrl": "/images/recipes/Salade César.png",
     "ingredients": [
       "1 laitue romaine",
       "50g croûtons",
@@ -26,6 +28,7 @@
   {
     "nom": "Mousse au Chocolat",
     "categorie": "dessert",
+    "imageUrl": "/images/recipes/Mousse au Chocolat.png",
     "ingredients": [
       "200g chocolat noir de bonne qualité",
       "6 œufs (séparer blancs et jaunes)",
@@ -37,6 +40,7 @@
   {
     "nom": "Limonade Maison",
     "categorie": "boisson",
+    "imageUrl": "/images/recipes/Limonade Maison.png",
     "ingredients": [
       "4 citrons",
       "1L eau plate ou gazeuse",
@@ -48,6 +52,7 @@
   {
     "nom": "Soupe à l'Oignon Gratinée",
     "categorie": "entrée",
+    "imageUrl": "/images/recipes/Soupe à l'Oignon Gratinée.png",
     "ingredients": [
       "4 gros oignons",
       "1L bouillon de bœuf",
@@ -60,6 +65,7 @@
   {
     "nom": "Poulet Rôti aux Herbes",
     "categorie": "plat",
+    "imageUrl": "/images/recipes/Poulet Rôti aux Herbes.png",
     "ingredients": [
       "1 poulet entier",
       "Herbes de Provence",
@@ -72,6 +78,7 @@
   {
     "nom": "Tarte Tatin",
     "categorie": "dessert",
+    "imageUrl": "/images/recipes/Tarte Tatin.png",
     "ingredients": [
       "1 pâte feuilletée",
       "6-8 pommes Golden",
@@ -83,6 +90,7 @@
   {
     "nom": "Gaspacho Andalou",
     "categorie": "entrée",
+    "imageUrl": "/images/recipes/Gaspacho Andalou.png",
     "ingredients": [
       "1kg tomates bien mûres",
       "1 concombre",
@@ -98,6 +106,7 @@
   {
     "nom": "Risotto aux Champignons",
     "categorie": "plat",
+    "imageUrl": "/images/recipes/Risotto aux Champignons.png",
     "ingredients": [
       "300g riz Arborio",
       "500g champignons de Paris",
@@ -113,6 +122,7 @@
   {
     "nom": "Crème Brûlée",
     "categorie": "dessert",
+    "imageUrl": "/images/recipes/Crème Brûlée.png",
     "ingredients": [
       "50cl crème liquide entière",
       "1 gousse de vanille",
@@ -125,6 +135,7 @@
   {
     "nom": "Smoothie Fruits Rouges",
     "categorie": "boisson",
+    "imageUrl": "/images/recipes/Smoothie Fruits Rouges.png",
     "ingredients": [
       "150g fruits rouges surgelés (framboises, myrtilles, mûres)",
       "1 banane",
@@ -136,6 +147,7 @@
   {
     "nom": "Quiche Lorraine",
     "categorie": "plat",
+    "imageUrl": "/images/recipes/Quiche Lorraine.png",
     "ingredients": [
       "1 pâte brisée",
       "200g lardons fumés",
@@ -150,6 +162,7 @@
   {
     "nom": "Verrine Avocat Crevette",
     "categorie": "entrée",
+    "imageUrl": "/images/recipes/Verrine Avocat Crevette.png",
     "ingredients": [
       "2 avocats mûrs",
       "200g crevettes cuites décortiquées",
@@ -163,6 +176,7 @@
   {
     "nom": "Fondant au Chocolat",
     "categorie": "dessert",
+    "imageUrl": "/images/recipes/Fondant au Chocolat.png",
     "ingredients": [
       "200g chocolat noir",
       "150g beurre",
@@ -175,6 +189,7 @@
   {
     "nom": "Ratatouille",
     "categorie": "plat",
+    "imageUrl": "/images/recipes/Ratatouille.png",
     "ingredients": [
       "1 aubergine",
       "2 courgettes",
@@ -192,6 +207,7 @@
   {
     "nom": "Thé Glacé Pêche",
     "categorie": "boisson",
+    "imageUrl": "/images/recipes/Thé Glacé Pêche.png",
     "ingredients": [
       "1L eau",
       "4 sachets de thé noir",
