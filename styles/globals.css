@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Supprimer ou commenter les règles suivantes si elles ne sont pas nécessaires 
+   car Tailwind gère la réinitialisation et les polices par défaut */
+/*
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -23,4 +26,10 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+*/
+
+/* Appliquer la couleur de fond de base du Design System */
+body {
+  @apply bg-gray-50;
 }

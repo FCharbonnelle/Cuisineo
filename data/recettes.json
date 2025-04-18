@@ -1,0 +1,204 @@
+[
+  {
+    "nom": "Spaghetti Carbonara",
+    "categorie": "plat",
+    "ingredients": [
+      "200g spaghetti",
+      "100g guanciale (ou pancetta)",
+      "2 gros œufs",
+      "50g Pecorino Romano râpé",
+      "Poivre noir fraîchement moulu"
+    ],
+    "etapes": "1. Cuire les spaghetti al dente.\n2. Pendant ce temps, faire revenir le guanciale jusqu'à ce qu'il soit croustillant.\n3. Battre les œufs avec le fromage et beaucoup de poivre.\n4. Égoutter les pâtes, les ajouter à la poêle avec le guanciale.\n5. Hors du feu, ajouter le mélange œufs/fromage et mélanger rapidement."
+  },
+  {
+    "nom": "Salade César",
+    "categorie": "entrée",
+    "ingredients": [
+      "1 laitue romaine",
+      "50g croûtons",
+      "30g copeaux de parmesan",
+      "Sauce César (huile, œuf, anchois, ail, moutarde, citron)",
+      "Poitrine de poulet grillée (optionnel)"
+    ],
+    "etapes": "1. Laver et couper la laitue.\n2. Préparer la sauce César.\n3. Mélanger la laitue avec la sauce, les croûtons et le parmesan.\n4. Ajouter le poulet grillé si désiré."
+  },
+  {
+    "nom": "Mousse au Chocolat",
+    "categorie": "dessert",
+    "ingredients": [
+      "200g chocolat noir de bonne qualité",
+      "6 œufs (séparer blancs et jaunes)",
+      "50g sucre",
+      "1 pincée de sel"
+    ],
+    "etapes": "1. Faire fondre le chocolat au bain-marie.\n2. Incorporer les jaunes d'œufs au chocolat fondu hors du feu.\n3. Monter les blancs en neige ferme avec la pincée de sel.\n4. Incorporer délicatement les blancs montés au mélange chocolaté.\n5. Réfrigérer au moins 4 heures."
+  },
+  {
+    "nom": "Limonade Maison",
+    "categorie": "boisson",
+    "ingredients": [
+      "4 citrons",
+      "1L eau plate ou gazeuse",
+      "100g sucre (ajuster au goût)",
+      "Feuilles de menthe (optionnel)"
+    ],
+    "etapes": "1. Presser le jus des citrons.\n2. Dans une carafe, dissoudre le sucre dans un peu d'eau chaude.\n3. Ajouter le jus de citron et le reste de l'eau.\n4. Bien mélanger et réfrigérer.\n5. Servir avec des glaçons et de la menthe si désiré."
+  },
+  {
+    "nom": "Soupe à l'Oignon Gratinée",
+    "categorie": "entrée",
+    "ingredients": [
+      "4 gros oignons",
+      "1L bouillon de bœuf",
+      "50g beurre",
+      "Tranches de pain rassis",
+      "100g fromage râpé (Gruyère, Emmental)"
+    ],
+    "etapes": "1. Émincer finement les oignons.\n2. Les faire revenir lentement dans le beurre jusqu'à caramélisation (environ 30 min).\n3. Ajouter le bouillon, saler, poivrer et laisser mijoter 20 min.\n4. Verser la soupe dans des bols allant au four.\n5. Déposer une tranche de pain, couvrir de fromage et gratiner sous le grill."
+  },
+  {
+    "nom": "Poulet Rôti aux Herbes",
+    "categorie": "plat",
+    "ingredients": [
+      "1 poulet entier",
+      "Herbes de Provence",
+      "Ail",
+      "Huile d'olive",
+      "Sel, poivre"
+    ],
+    "etapes": "1. Préchauffer le four à 200°C.\n2. Badigeonner le poulet d'huile d'olive.\n3. Saler, poivrer, saupoudrer d'herbes de Provence et insérer des gousses d'ail à l'intérieur.\n4. Enfourner pour 1h15 à 1h30 (adapter selon la taille)."
+  },
+  {
+    "nom": "Tarte Tatin",
+    "categorie": "dessert",
+    "ingredients": [
+      "1 pâte feuilletée",
+      "6-8 pommes Golden",
+      "150g sucre",
+      "80g beurre demi-sel"
+    ],
+    "etapes": "1. Préparer un caramel à sec avec le sucre dans un moule à manqué allant sur le feu.\n2. Hors du feu, ajouter le beurre en morceaux.\n3. Peler et couper les pommes en quartiers, les disposer serrées sur le caramel.\n4. Couvrir avec la pâte feuilletée en rentrant les bords.\n5. Cuire 30-40 min à 180°C.\n6. Laisser tiédir avant de démouler."
+  },
+  {
+    "nom": "Gaspacho Andalou",
+    "categorie": "entrée",
+    "ingredients": [
+      "1kg tomates bien mûres",
+      "1 concombre",
+      "1 poivron vert",
+      "1 oignon",
+      "2 gousses d'ail",
+      "Huile d'olive",
+      "Vinaigre de Xérès",
+      "Sel"
+    ],
+    "etapes": "1. Peler et épépiner les tomates et le concombre.\n2. Couper tous les légumes en morceaux.\n3. Mixer tous les ingrédients (légumes, ail, huile, vinaigre, sel) jusqu'à obtenir une soupe lisse.\n4. Ajuster l'assaisonnement et la consistance avec de l'eau si besoin.\n5. Réfrigérer au moins 2 heures avant de servir très frais."
+  },
+  {
+    "nom": "Risotto aux Champignons",
+    "categorie": "plat",
+    "ingredients": [
+      "300g riz Arborio",
+      "500g champignons de Paris",
+      "1 oignon",
+      "2 gousses d'ail",
+      "1L bouillon de légumes chaud",
+      "50g parmesan râpé",
+      "Vin blanc sec",
+      "Huile d'olive, beurre"
+    ],
+    "etapes": "1. Nettoyer et émincer les champignons. Les faire revenir dans une poêle avec de l'ail.\n2. Hacher l'oignon et le faire suer dans une casserole avec de l'huile d'olive.\n3. Ajouter le riz et le faire nacrer (devenir translucide).\n4. Déglacer avec un peu de vin blanc.\n5. Ajouter le bouillon louche par louche, en attendant l'absorption avant d'ajouter la suivante, sans cesser de remuer.\n6. À mi-cuisson, ajouter les champignons.\n7. Quand le riz est cuit (al dente), retirer du feu, ajouter le beurre et le parmesan (mantecatura)."
+  },
+  {
+    "nom": "Crème Brûlée",
+    "categorie": "dessert",
+    "ingredients": [
+      "50cl crème liquide entière",
+      "1 gousse de vanille",
+      "5 jaunes d'œufs",
+      "100g sucre en poudre",
+      "Sucre cassonade pour caraméliser"
+    ],
+    "etapes": "1. Préchauffer le four à 100°C.\n2. Faire chauffer la crème avec la gousse de vanille fendue et grattée. Laisser infuser.\n3. Battre les jaunes avec le sucre jusqu'à blanchiment.\n4. Verser la crème chaude (sans la gousse) sur le mélange œufs/sucre en remuant.\n5. Répartir dans des ramequins.\n6. Cuire au bain-marie au four pendant 1h.\n7. Laisser refroidir complètement. Au moment de servir, saupoudrer de cassonade et caraméliser au chalumeau."
+  },
+  {
+    "nom": "Smoothie Fruits Rouges",
+    "categorie": "boisson",
+    "ingredients": [
+      "150g fruits rouges surgelés (framboises, myrtilles, mûres)",
+      "1 banane",
+      "200ml lait (ou boisson végétale)",
+      "1 c.à.s miel ou sirop d'érable (optionnel)"
+    ],
+    "etapes": "1. Mettre tous les ingrédients dans un blender.\n2. Mixer jusqu'à obtenir une consistance lisse et homogène.\n3. Ajuster la sucrosité si besoin.\n4. Servir immédiatement."
+  },
+  {
+    "nom": "Quiche Lorraine",
+    "categorie": "plat",
+    "ingredients": [
+      "1 pâte brisée",
+      "200g lardons fumés",
+      "3 œufs",
+      "20cl crème fraîche épaisse",
+      "20cl lait",
+      "Noix de muscade râpée",
+      "Sel, poivre"
+    ],
+    "etapes": "1. Préchauffer le four à 180°C.\n2. Étaler la pâte dans un moule à tarte, piquer le fond.\n3. Faire revenir les lardons à la poêle.\n4. Dans un saladier, battre les œufs, la crème, le lait. Saler (peu), poivrer, ajouter la muscade.\n5. Répartir les lardons sur le fond de tarte.\n6. Verser l'appareil (mélange œufs/crème) par-dessus.\n7. Enfourner pour 30-40 minutes."
+  },
+  {
+    "nom": "Verrine Avocat Crevette",
+    "categorie": "entrée",
+    "ingredients": [
+      "2 avocats mûrs",
+      "200g crevettes cuites décortiquées",
+      "1 citron vert",
+      "Quelques brins de coriandre",
+      "Sauce cocktail (mayonnaise, ketchup, Tabasco)",
+      "Sel, poivre"
+    ],
+    "etapes": "1. Couper les avocats en dés, arroser de jus de citron vert.\n2. Hacher la coriandre.\n3. Mélanger les dés d'avocat, les crevettes, la coriandre.\n4. Assaisonner avec sel, poivre et un peu de sauce cocktail.\n5. Répartir dans des verrines et réfrigérer jusqu'au service."
+  },
+  {
+    "nom": "Fondant au Chocolat",
+    "categorie": "dessert",
+    "ingredients": [
+      "200g chocolat noir",
+      "150g beurre",
+      "150g sucre",
+      "3 œufs",
+      "50g farine"
+    ],
+    "etapes": "1. Préchauffer le four à 180°C.\n2. Faire fondre le chocolat et le beurre au bain-marie ou micro-ondes.\n3. Dans un saladier, fouetter les œufs et le sucre.\n4. Ajouter le mélange chocolat/beurre fondu.\n5. Incorporer la farine tamisée.\n6. Verser dans un moule beurré et fariné.\n7. Cuire 20-25 minutes (le centre doit rester fondant)."
+  },
+  {
+    "nom": "Ratatouille",
+    "categorie": "plat",
+    "ingredients": [
+      "1 aubergine",
+      "2 courgettes",
+      "1 poivron rouge",
+      "1 poivron jaune",
+      "2 oignons",
+      "4 tomates",
+      "2 gousses d'ail",
+      "Huile d'olive",
+      "Herbes de Provence",
+      "Sel, poivre"
+    ],
+    "etapes": "1. Couper tous les légumes en dés de taille similaire.\n2. Faire revenir chaque légume séparément dans l'huile d'olive (sauf les tomates) et réserver.\n3. Faire revenir les oignons et l'ail hachés.\n4. Ajouter les tomates pelées et concassées, les herbes, sel, poivre. Laisser mijoter 10 min.\n5. Ajouter tous les autres légumes pré-cuits dans la sauce tomate.\n6. Laisser mijoter à couvert pendant au moins 30 minutes, en remuant de temps en temps."
+  },
+  {
+    "nom": "Thé Glacé Pêche",
+    "categorie": "boisson",
+    "ingredients": [
+      "1L eau",
+      "4 sachets de thé noir",
+      "2 pêches mûres",
+      "Sucre (selon goût)",
+      "Quelques feuilles de menthe"
+    ],
+    "etapes": "1. Faire chauffer l'eau sans la faire bouillir.\n2. Infuser les sachets de thé pendant 5 minutes.\n3. Retirer les sachets, ajouter le sucre et laisser refroidir.\n4. Peler et couper les pêches en morceaux.\n5. Ajouter les morceaux de pêche et la menthe au thé refroidi.\n6. Réfrigérer plusieurs heures avant de servir."
+  }
+] 
