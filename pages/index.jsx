@@ -4,6 +4,10 @@ import { getAllRecipes } from '@/services/recipesAPI'; // Fonction API pour réc
 import RecipeCard from '@/components/recipes/RecipeCard'; // Composant pour afficher une carte recette
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline'; // Icône pour la barre de recherche
 
+// Définition des catégories possibles pour les filtres.
+// Mettre cette constante ici la rend facilement accessible et modifiable.
+const CATEGORIES = ['Toutes', 'entrée', 'plat', 'dessert', 'boisson'];
+
 /**
  * Page d'accueil de l'application.
  * Affiche la liste de toutes les recettes publiques disponibles,
@@ -20,6 +24,10 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
   // error: Stocke un message d'erreur si le chargement échoue
   const [error, setError] = useState(null);
+  
+  // NOUVEL ÉTAT: Stocke la catégorie actuellement sélectionnée pour le filtre.
+  // Initialisé à 'Toutes' pour afficher toutes les recettes par défaut.
+  const [selectedCategory, setSelectedCategory] = useState('Toutes');
 
   // --- Effet de bord pour charger les données au montage --- 
   useEffect(() => {
@@ -49,14 +57,29 @@ export default function HomePage() {
   // qu'une seule fois, après le premier rendu du composant (équivalent de componentDidMount).
   }, []); 
 
-  // --- Filtrage des recettes --- 
-  // Cette logique filtre le tableau `recipes` localement (côté client) 
-  // en fonction de la valeur actuelle de `searchTerm`.
-  const filteredRecipes = recipes.filter((recipe) =>
-    // Vérifie si le nom de la recette (en minuscules) inclut le terme de recherche (en minuscules)
-    recipe.nom.toLowerCase().includes(searchTerm.toLowerCase())
-    // On pourrait ajouter ici d'autres critères de filtre (ex: ingrédients, catégorie)
-  );
+  // --- Logique de Filtrage Combinée --- 
+  // Filtre maintenant les recettes en fonction de `searchTerm` ET `selectedCategory`.
+  const filteredRecipes = recipes.filter((recipe) => {
+    // Condition 1: La catégorie de la recette doit correspondre à la catégorie sélectionnée
+    // OU la catégorie sélectionnée doit être 'Toutes' (pour ne pas filtrer par catégorie).
+    // On compare en minuscules pour éviter les problèmes de casse.
+    const categoryMatch = selectedCategory === 'Toutes' || recipe.categorie.toLowerCase() === selectedCategory.toLowerCase();
+    
+    // Condition 2: Le nom de la recette doit inclure le terme de recherche.
+    const searchMatch = recipe.nom.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // La recette est incluse dans `filteredRecipes` si les DEUX conditions sont vraies.
+    return categoryMatch && searchMatch;
+  });
+
+  // --- Gestionnaire d'événement pour les boutons de catégorie ---
+  // Fonction appelée lorsqu'un bouton de catégorie est cliqué.
+  const handleCategoryFilter = (category) => {
+    console.log(`Filtre appliqué pour la catégorie : ${category}`);
+    // Met à jour l'état `selectedCategory` avec la nouvelle catégorie.
+    // Cela déclenchera un nouveau rendu et la logique de `filteredRecipes` sera réévaluée.
+    setSelectedCategory(category);
+  };
 
   // --- Rendu JSX --- 
   return (
@@ -71,7 +94,7 @@ export default function HomePage() {
       <div className="mb-6 md:mb-8"> {/* Marge inférieure plus grande sur écrans larges */} 
         <h1 className="text-3xl md:text-4xl font-semibold mb-4 text-gray-800">Découvrez nos recettes</h1>
         {/* Barre de recherche avec icône */} 
-        <div className="relative max-w-lg"> {/* Limite la largeur de la barre */} 
+        <div className="relative max-w-lg mb-6"> {/* Ajout marge sous recherche */}
           <input
             type="text"
             placeholder="Rechercher une recette par nom..." // Texte d'aide
@@ -84,6 +107,32 @@ export default function HomePage() {
           />
           {/* Icône loupe positionnée à gauche dans l'input */}
           <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 pointer-events-none" />
+        </div>
+        
+        {/* NOUVEAU: Section des boutons de filtre par catégorie */} 
+        <div className="mb-6 md:mb-8">
+          <h2 className="text-lg font-medium text-gray-700 mb-3">Filtrer par catégorie :</h2>
+          {/* Conteneur flex pour aligner les boutons, avec retour à la ligne sur petits écrans */}
+          <div className="flex flex-wrap gap-2"> 
+            {/* Boucle sur notre constante CATEGORIES pour créer un bouton pour chaque */}
+            {CATEGORIES.map((category) => (
+              <button
+                key={category} // Clé unique pour chaque bouton
+                onClick={() => handleCategoryFilter(category)} // Appelle notre handler au clic
+                // Style conditionnel pour le bouton actif :
+                // - Actif: bg primaire, texte NOIR (pour contraste max), bordure foncée.
+                // - Inactif: bg orange clair, texte orange foncé, hover.
+                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors duration-150 shadow-sm 
+                  ${selectedCategory === category 
+                    ? 'bg-primary text-black border border-primary-dark font-semibold'
+                    : 'bg-orange-100 text-orange-800 border border-orange-200 hover:bg-orange-200 hover:border-orange-400'
+                  }`}
+              >
+                {/* Affiche le nom de la catégorie, avec majuscule pour la première lettre */}
+                {category.charAt(0).toUpperCase() + category.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -111,9 +160,9 @@ export default function HomePage() {
             // Si non (aucune recette trouvée après filtrage ou liste vide initialement)
             // Affiche un message approprié
             <p className="text-center text-gray-500 col-span-full py-10">
-              {/* Message différent si un terme de recherche est actif */}
-              {recipes.length > 0 && searchTerm 
-                ? `Aucune recette trouvée pour "${searchTerm}".`
+              {/* Message si aucune recette ne correspond aux filtres actifs */}
+              {recipes.length > 0 
+                ? `Aucune recette trouvée pour "${searchTerm}"${selectedCategory !== 'Toutes' ? ` dans la catégorie "${selectedCategory}"` : ''}.`
                 : "Aucune recette à afficher pour le moment."
               }
             </p>
