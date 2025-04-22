@@ -165,12 +165,13 @@ function AuthForm() {
         <button
           type="submit"
           disabled={loading} // Désactivé pendant le chargement
-          // Styles du bouton, incluant l'état désactivé
-          className="w-full bg-primary hover:bg-primary-dark text-white rounded-lg py-2.5 px-4 duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center font-semibold shadow-sm"
+          // Style: fond primary, texte NOIR pour visibilité max
+          className="w-full bg-primary hover:bg-primary-dark text-black rounded-lg py-2.5 px-4 duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center font-semibold shadow-sm border border-primary-dark" // Changé text-white, ajouté bordure
         >
           {/* Affiche une icône de chargement ou le texte approprié */}
           {loading ? (
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            // Icône de chargement en noir
+            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -180,18 +181,17 @@ function AuthForm() {
 
       {/* --- Lien pour basculer entre Connexion et Inscription --- */}
       <p className="mt-6 text-center text-sm text-gray-600">
-        {/* Texte conditionnel */}
         {isLogin ? 'Pas encore de compte ?' : 'Déjà un compte ?'}{' '}
-        {/* Bouton (stylisé comme un lien) pour changer le mode */}
+        {/* Bouton de bascule stylisé avec fond orange clair */}
         <button
-          type="button" // Important: type="button" pour ne pas soumettre le formulaire
+          type="button"
           onClick={() => {
-             setIsLogin(!isLogin); // Inverse l'état isLogin
-             setAuthError(null); // Réinitialise les erreurs en changeant de mode
+             setIsLogin(!isLogin);
+             setAuthError(null);
           }}
-          className="font-medium text-primary hover:text-primary-dark focus:outline-none focus:underline"
+          // Style bouton: bg orange clair, bordure, texte, hover...
+          className="inline-block px-3 py-1 rounded-md bg-orange-100 border border-orange-200 text-orange-800 hover:bg-orange-200 hover:border-orange-400 hover:text-orange-900 focus:outline-none focus:ring-1 focus:ring-orange-300 transition-colors duration-150 shadow-sm ml-1"
         >
-          {/* Texte du bouton conditionnel */}
           {isLogin ? 'Inscrivez-vous' : 'Connectez-vous'}
         </button>
       </p>

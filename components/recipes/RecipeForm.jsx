@@ -299,14 +299,14 @@ function RecipeForm({ recipeToEdit = null }) {
         <button
           type="submit" // Type standard pour soumettre un formulaire
           disabled={loading} // Désactive le bouton pendant le chargement
-          // Classes Tailwind pour le style (fond, texte, arrondi, ombre, etc.)
-          // Inclut des styles pour l'état désactivé (`disabled:...`)
-          className="bg-primary hover:bg-primary-dark text-black font-semibold rounded-lg py-3 px-6 shadow-md hover:shadow-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+          // Style du bouton: fond primary, texte blanc comme sur la maquette
+          className="bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg py-3 px-6 shadow-md hover:shadow-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center" // Remplacé text-black par text-white
         >
            {/* Affiche une icône de chargement si `loading` est vrai */}
            {loading ? (
             <>
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              {/* Icône de chargement maintenant en blanc */}
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>

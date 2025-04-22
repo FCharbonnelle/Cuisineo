@@ -48,8 +48,8 @@ function RecipeCard({ recipe, onEdit, onDelete }) {
 
   // --- Rendu JSX --- 
   return (
-    // Conteneur principal de la carte avec styles Tailwind
-    <div className="bg-white shadow-md rounded-xl overflow-hidden flex flex-col h-full group">
+    // Conteneur principal - Ajout d'une bordure pour meilleure délimitation
+    <div className="bg-white shadow-md rounded-xl overflow-hidden flex flex-col h-full group border border-gray-200">
       {/* Image cliquable menant au détail */} 
       <Link href={`/recette/${recipe.id}`} className="block relative w-full h-48">
         {/* Composant Image de Next.js pour l'optimisation */}
@@ -65,13 +65,13 @@ function RecipeCard({ recipe, onEdit, onDelete }) {
 
       {/* Contenu textuel de la carte */} 
       <div className="p-4 flex flex-col flex-grow"> {/* flex-grow pour que toutes les cartes aient la même hauteur */}
-        {/* Badge Catégorie */}
-        <span className="inline-block bg-primary-light text-primary-dark text-xs font-semibold px-2 py-1 rounded-full mb-2 capitalize">
+        {/* Badge Catégorie - Style ajusté pour meilleur contraste */}
+        <span className="inline-block bg-orange-100 text-orange-700 text-xs font-semibold px-2 py-1 rounded-full mb-2 capitalize">
           {recipe.categorie}
         </span>
-        {/* Titre cliquable menant au détail */} 
+        {/* Titre cliquable menant au détail - Texte plus foncé */}
         <Link href={`/recette/${recipe.id}`} className="block">
-            <h3 className="text-lg font-semibold mb-2 text-gray-800 hover:text-primary-dark truncate"> {/* truncate coupe le texte trop long */}
+            <h3 className="text-lg font-semibold mb-2 text-gray-900 hover:text-primary-dark truncate"> {/* Remplacé text-gray-800 */}
                  {recipe.nom}
             </h3>
         </Link>
@@ -83,22 +83,22 @@ function RecipeCard({ recipe, onEdit, onDelete }) {
 
             {/* Conteneur pour les boutons d'action */}
             <div className="flex space-x-1">
-                {/* Affiche le bouton Modifier seulement si onEdit est fourni */}
+                {/* Bouton Modifier avec fond orange clair */}
                 {onEdit && (
                     <button
                         onClick={handleEditClick}
-                        title="Modifier la recette" // Tooltip pour l'accessibilité
-                        className="p-1.5 text-gray-500 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 rounded-md hover:bg-blue-50 transition-colors"
+                        title="Modifier la recette"
+                        className="p-1.5 bg-orange-100 border border-orange-200 text-orange-800 rounded-md hover:bg-blue-100 hover:border-blue-300 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-blue-500 transition-colors duration-150 shadow-sm"
                     >
                         <PencilSquareIcon className="h-5 w-5" />
                     </button>
                 )}
-                {/* Affiche le bouton Supprimer seulement si onDelete est fourni */}
+                {/* Bouton Supprimer avec fond orange clair */}
                 {onDelete && (
                     <button
                         onClick={handleDeleteClick}
                         title="Supprimer la recette"
-                        className="p-1.5 text-gray-500 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 rounded-md hover:bg-red-50 transition-colors"
+                        className="p-1.5 bg-orange-100 border border-orange-200 text-orange-800 rounded-md hover:bg-red-100 hover:border-red-300 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500 transition-colors duration-150 shadow-sm"
                     >
                         <TrashIcon className="h-5 w-5" />
                     </button>

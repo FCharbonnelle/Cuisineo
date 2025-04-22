@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext, useMemo } from 'react';
 // Fonctions Firebase Auth pour écouter l'état, créer, connecter et déconnecter un utilisateur
 import { onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 // Instance `auth` initialisée depuis notre configuration Firebase
@@ -82,16 +82,16 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   };
 
-  // --- Valeur fournie par le Contexte --- 
-  // Objet contenant les données et fonctions que nous voulons rendre accessibles
-  // aux composants qui utiliseront ce contexte.
-  const value = {
-    user,       // L'objet utilisateur Firebase (ou null)
-    loading,    // L'état de chargement initial
-    signup,     // La fonction pour s'inscrire
-    login,      // La fonction pour se connecter
-    logout,     // La fonction pour se déconnecter
-  };
+  // --- Valeur fournie par le Contexte (MÉMOÏSÉE) --- 
+  // useMemo garantit que l'objet `value` n'est recréé (et sa référence ne change)
+  // que si `user` ou `loading` changent réellement.
+  const value = useMemo(() => ({
+    user,
+    loading,
+    signup,
+    login,
+    logout,
+  }), [user, loading]); // Dépendances de useMemo
 
   // --- Rendu du Provider --- 
   return (

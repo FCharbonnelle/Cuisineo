@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link'; // Composant pour la navigation côté client dans Next.js
 import { useAuth } from '@/contexts/AuthContext'; // Hook pour accéder à l'état d'authentification et à logout
-import { useRouter } from 'next/router'; // Hook pour la redirection après déconnexion
+import { useRouter } from 'next/router'; // Hook pour la redirection après déconnexion et obtenir le chemin actuel
 // Icônes pour les liens/boutons
-import { ArrowLeftOnRectangleIcon, ArrowRightOnRectangleIcon, UserPlusIcon, PencilSquareIcon, BookmarkIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftOnRectangleIcon, ArrowRightOnRectangleIcon, UserPlusIcon, PencilSquareIcon, BookmarkIcon, HomeIcon } from '@heroicons/react/24/outline';
 
 /**
  * Composant de la barre de navigation principale.
@@ -15,6 +15,7 @@ function Navbar() {
   const { user, logout } = useAuth();
   // Récupère l'objet router pour la redirection
   const router = useRouter();
+  const currentPath = router.pathname; // Récupère le chemin actuel
 
   /**
    * Gère la déconnexion de l'utilisateur.
@@ -31,60 +32,68 @@ function Navbar() {
     }
   };
 
+  // Helper - Style bouton avec fond orange clair
+  const getLinkClassName = (path) => {
+    // Base: padding, arrondi, bg orange clair, bordure orange clair, texte orange foncé
+    const baseClasses = "flex items-center px-3 py-1 rounded-md bg-orange-100 border border-orange-200 text-orange-800 transition-colors duration-150 shadow-sm";
+    // Actif: bg orange primaire, bordure primaire, texte NOIR (nouvelle demande)
+    const activeClasses = currentPath === path 
+      ? "bg-primary border-primary text-black font-medium"
+      : "hover:bg-orange-200 hover:border-orange-400 hover:text-orange-900";
+    return `${baseClasses} ${activeClasses}`;
+  };
+
+  // Classes Logout - Fond orange clair, hover rouge
+  const logoutButtonClasses = "flex items-center px-3 py-1 rounded-md bg-orange-100 border border-orange-200 text-orange-800 hover:bg-red-100 hover:border-red-300 hover:text-red-700 transition-colors duration-150 shadow-sm";
+
   return (
-    // Balise <nav> sémantique pour la navigation
-    // Classes Tailwind pour le style : fond blanc, bordure basse, hauteur fixe,
-    // flexbox pour aligner les éléments, sticky pour rester en haut, z-index pour être au-dessus
-    <nav className="bg-white border-b border-gray-200 h-16 flex items-center sticky top-0 z-10 shadow-sm">
-      {/* Conteneur pour limiter la largeur et centrer le contenu, avec padding horizontal */}
-      <div className="container mx-auto px-4 flex justify-between items-center">
+    // Header plus large (h-20) et style Navbar
+    <nav className="bg-white border-b border-gray-200 h-20 flex items-center sticky top-0 z-10 shadow-sm">
+      <div className="container mx-auto px-4 flex items-center">
         
-        {/* Logo/Titre cliquable ramenant à l'accueil */}
-        <Link href="/" className="text-2xl font-semibold text-primary-dark hover:text-primary transition-colors">
+        <Link href="/" className="text-2xl font-semibold text-gray-900 hover:text-primary transition-colors mr-auto">
           🍳 Cuisineo
         </Link>
         
-        {/* Section des liens de navigation (à droite) */}
-        <div>
-          {/* Affichage conditionnel basé sur l'état de connexion (`user`) */}
-          {user ? (
-            // --- Si l'utilisateur EST connecté ---
-            <div className="flex items-center space-x-4">
-              {/* Email de l'utilisateur (pourrait être remplacé par un nom d'utilisateur plus tard) */}
-              <span className="text-sm text-gray-600 hidden md:inline">Bonjour, {user.email}</span>
-              
-              {/* Lien vers "Mes Recettes" */}
-              <Link href="/mes-recettes" className="flex items-center text-gray-700 hover:text-primary transition-colors" title="Mes Recettes">
+        {user ? (
+          <>
+            <div className="flex-grow text-center px-4">
+              <span className="text-lg text-gray-600 hidden md:inline">
+                Bonjour, {user.email}
+              </span>
+            </div>
+
+            <div className="flex items-center space-x-3 ml-auto">
+              <Link href="/" className={getLinkClassName('/')} title="Accueil">
+                 <HomeIcon className="h-5 w-5 mr-1" />
+                 <span className="hidden sm:inline">Accueil</span>
+              </Link>
+              <Link href="/mes-recettes" className={getLinkClassName('/mes-recettes')} title="Mes Recettes">
                 <BookmarkIcon className="h-5 w-5 mr-1" />
                 <span className="hidden sm:inline">Mes Recettes</span>
               </Link>
-              
-              {/* Lien vers "Ajouter" */}
-              <Link href="/ajouter" className="flex items-center text-gray-700 hover:text-primary transition-colors" title="Ajouter une recette">
+              <Link href="/ajouter" className={getLinkClassName('/ajouter')} title="Ajouter une recette">
                 <PencilSquareIcon className="h-5 w-5 mr-1" />
                  <span className="hidden sm:inline">Ajouter</span>
              </Link>
-              
-              {/* Bouton de Déconnexion */}
               <button 
                 onClick={handleLogout} 
-                className="flex items-center text-gray-700 hover:text-red-600 transition-colors" 
+                className={logoutButtonClasses}
                 title="Déconnexion"
               >
                 <ArrowLeftOnRectangleIcon className="h-5 w-5 mr-1" />
                 <span className="hidden sm:inline">Déconnexion</span>
               </button>
             </div>
-          ) : (
-            // --- Si l'utilisateur N'EST PAS connecté ---
-            <Link href="/connexion" className="flex items-center text-gray-700 hover:text-primary transition-colors">
+          </>
+        ) : (
+          <div className="ml-auto">
+            <Link href="/connexion" className={getLinkClassName('/connexion')}>
               <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />
               Connexion
-              {/* <UserPlusIcon className="h-5 w-5 mr-1" /> 
-                  Inscription // Alternative si on voulait un lien direct inscription */}
             </Link>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </nav>
   );
