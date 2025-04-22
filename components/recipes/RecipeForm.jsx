@@ -295,25 +295,27 @@ function RecipeForm({ recipeToEdit = null }) {
       </div>
       
       {/* --- Bouton de soumission --- */}
-      <div className="flex justify-end"> {/* Aligne le bouton à droite */}
+      <div className="flex justify-end">
         <button
-          type="submit" // Type standard pour soumettre un formulaire
-          disabled={loading} // Désactive le bouton pendant le chargement
-          // Style du bouton: fond primary, texte blanc comme sur la maquette
-          className="bg-primary hover:bg-primary-dark text-white font-semibold rounded-lg py-3 px-6 shadow-md hover:shadow-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center" // Remplacé text-black par text-white
+          type="submit"
+          disabled={loading}
+          // Style conditionnel basé sur isEditing
+          className={`bg-primary hover:bg-primary-dark font-semibold rounded-lg py-3 px-6 shadow-md hover:shadow-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center border border-primary-dark 
+            ${isEditing ? 'text-black' : 'text-white'}` // Texte noir si édition, blanc si ajout
+          }
         >
-           {/* Affiche une icône de chargement si `loading` est vrai */}
            {loading ? (
             <>
-              {/* Icône de chargement maintenant en blanc */}
-              <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              {/* Icône de chargement: couleur conditionnelle */}
+              <svg className={`animate-spin -ml-1 mr-3 h-5 w-5 ${isEditing ? 'text-black' : 'text-white'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              {isEditing ? 'Mise à jour...' : 'Ajouter la recette'}
+              {/* Texte du bouton pendant le chargement */}
+              {isEditing ? 'Mise à jour...' : 'Ajout...'}
             </>
           ) : (
-            // Affiche le texte approprié selon si on est en mode édition ou ajout
+            // Texte du bouton état normal
             isEditing ? 'Mettre à jour' : 'Ajouter la recette'
           )}
         </button>

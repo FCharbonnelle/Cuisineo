@@ -6,6 +6,7 @@ import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '@/firebase/client'; // Instance de notre base de données Firestore
 import RecipeCard from '@/components/recipes/RecipeCard'; // Composant pour afficher une carte de recette
 import { deleteRecipe } from '@/services/recipesAPI';
+import Link from 'next/link';
 
 /**
  * Page "Mes Recettes".
@@ -127,15 +128,13 @@ function MesRecettesPage() {
     
     /**
      * Gère le clic sur le bouton "Modifier".
-     * (Fonctionnalité à implémenter dans une étape ultérieure)
+     * Redirige l'utilisateur vers la page de modification dédiée.
      * @param {string} recipeId - L'ID de la recette à modifier.
      */
     const handleEdit = (recipeId) => {
-        // TODO: Implémenter la redirection vers la page/formulaire de modification.
-        console.log("(Placeholder) Modifier recette avec ID:", recipeId);
-        alert(`Fonctionnalité "Modifier" pour la recette ${recipeId} à implémenter.`);
-        // Exemple de redirection future:
-        // router.push(`/modifier/${recipeId}`); 
+        console.log(`Redirection vers la modification pour ID: ${recipeId}`);
+        // Utilise router.push pour naviguer vers la page dynamique
+        router.push(`/modifier/${recipeId}`); 
     };
 
     // --- Rendu conditionnel --- 
