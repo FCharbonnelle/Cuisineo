@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form'; // Hook pour gérer les formulaires facilement
+import { useForm, useWatch } from 'react-hook-form'; // Hook pour gérer les formulaires facilement et useWatch pour l'aperçu
 import { yupResolver } from '@hookform/resolvers/yup'; // Pour connecter react-hook-form avec Yup
 import * as yup from 'yup'; // Bibliothèque pour la validation de schémas
 import { useRouter } from 'next/router'; // Pour la redirection après soumission
@@ -7,6 +7,32 @@ import { useAuth } from '@/contexts/AuthContext'; // Pour obtenir l'UID de l'uti
 // Fonctions Firestore pour ajouter/mettre à jour des documents
 import { collection, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebase/client'; // Instance de la base de données Firestore
+// Suppression des imports Firebase Storage
+// import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+// import { storage } from '@/firebase/client'; 
+
+// --- NOTE IMPORTANTE CONCERNANT LES IMAGES --- 
+// Initialement, l'upload direct d'images vers Firebase Storage avait été implémenté.
+// Cependant, en raison des limitations du plan gratuit "Spark" de Firebase,
+// la configuration CORS nécessaire pour autoriser les uploads depuis le navigateur
+// (http://localhost:3000) vers le bucket Storage n'est pas possible sans passer
+// au plan payant ou utiliser des Cloud Functions comme intermédiaire.
+// 
+// **Contournement choisi pour ce projet :**
+// Pour permettre d'avoir des images associées aux recettes sans bloquer le développement
+// et pour avoir un rendu visuel satisfaisant pour la présentation (jury, rapport),
+// le formulaire a été adapté pour accepter une URL directe vers une image hébergée
+// ailleurs (ex: sites d'images libres de droits comme Unsplash, Pexels).
+// 
+// **Implications :**
+// - L'utilisateur doit trouver et copier/coller l'URL de l'image.
+// - La fonctionnalité d'upload direct pourra être réintégrée si le projet évolue
+//   vers un plan payant ou si une solution via Cloud Functions est développée.
+// - La configuration des domaines d'images externes est nécessaire dans `next.config.mjs`.
+// 
+// Cette difficulté rencontrée et le contournement mis en place peuvent être
+// mentionnés lors de la présentation du projet.
+// --- FIN NOTE --- 
 
 // --- Schéma de validation avec Yup ---
 // Définit les règles pour chaque champ du formulaire.
@@ -20,12 +46,16 @@ const recipeSchema = yup.object().shape({
   ingredientsText: yup.string().required("La liste des ingrédients est obligatoire (un par ligne)."), 
   // Champ 'etapes': doit être une chaîne et est requis.
   etapes: yup.string().required("Les étapes de préparation sont obligatoires."),
-  // Note: Le champ pour l'URL de l'image (imageUrl) n'est pas inclus ici.
-  // Il sera géré séparément lors de l'étape d'upload d'image.
+  // Ajout du champ imageUrl: doit être une URL valide, mais n'est pas obligatoire.
+  imageUrl: yup.string().url("Veuillez entrer une URL valide (ex: https://...).").nullable().transform(value => value || null), // Transforme chaîne vide en null
 });
 
+// --- Configuration pour l'upload d'image ---
+// const MAX_IMAGE_SIZE_MB = 5;
+// const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
 /**
- * Composant formulaire pour ajouter ou modifier une recette.
+ * Composant formulaire pour ajouter ou modifier une recette, utilisant une URL pour l'image.
  * Utilise react-hook-form pour la gestion de l'état du formulaire et la soumission,
  * et Yup pour la validation des données.
  * 
@@ -40,6 +70,11 @@ function RecipeForm({ recipeToEdit = null }) {
   const [formError, setFormError] = useState(null);
   // État pour indiquer si le formulaire est en cours de soumission (pour désactiver le bouton)
   const [loading, setLoading] = useState(false);
+  // Suppression des états liés à l'upload
+  // const [uploadProgress, setUploadProgress] = useState(0);
+  // const [imageFile, setImageFile] = useState(null);
+  // const [imagePreview, setImagePreview] = useState(null); 
+  // const [imageError, setImageError] = useState(null); 
 
   // Détermine si le formulaire est en mode édition en vérifiant si recipeToEdit a été passé
   const isEditing = !!recipeToEdit;
@@ -62,15 +97,19 @@ function RecipeForm({ recipeToEdit = null }) {
         categorie: recipeToEdit.categorie,
         // Les ingrédients (tableau) sont joints avec \n pour remplir le textarea.
         ingredientsText: recipeToEdit.ingredients.join('\n'), 
-        etapes: recipeToEdit.etapes
-        // Pas d'imageUrl ici
+        etapes: recipeToEdit.etapes,
+        imageUrl: recipeToEdit.imageUrl || '', // Pré-remplir avec l'URL existante
     } : {
-        nom: '' /* ou undefined */,
+        nom: '', /* ou undefined */
         categorie: 'plat', // Valeur par défaut pour la catégorie
         ingredientsText: '',
-        etapes: ''
+        etapes: '',
+        imageUrl: '', // Champ URL vide par défaut
     }
   });
+
+  // --- Hook pour surveiller la valeur du champ imageUrl en temps réel --- 
+  const imageUrlValue = useWatch({ control, name: 'imageUrl' });
 
   // --- Logique de Soumission --- 
   /**
@@ -88,63 +127,50 @@ function RecipeForm({ recipeToEdit = null }) {
     setLoading(true); // Début du chargement (désactive le bouton)
     setFormError(null); // Réinitialise les erreurs précédentes
     
-    // Transformation des ingrédients: 
-    // 1. Sépare le texte du textarea par les retours à la ligne (\n)
-    // 2. Supprime les espaces vides au début/fin de chaque ligne (trim)
-    // 3. Filtre pour enlever les lignes vides.
-    const ingredientsArray = data.ingredientsText.split('\n').map(line => line.trim()).filter(line => line);
-    
-    // Préparation de l'objet recette à envoyer à Firestore
-    const recipeData = {
+    try {
+      // Préparation des données pour Firestore (inclut imageUrl du formulaire)
+      const ingredientsArray = data.ingredientsText.split('\n').map(line => line.trim()).filter(line => line);
+      const recipeData = {
         nom: data.nom,
         categorie: data.categorie,
-        ingredients: ingredientsArray, // Utilise le tableau transformé
+        ingredients: ingredientsArray,
         etapes: data.etapes,
-        userId: user.uid, // Associe la recette à l'utilisateur connecté
-        // imageUrl: sera ajouté plus tard lors de l'étape d'upload
-    };
+        userId: user.uid,
+        // Utilise directement l'URL validée depuis les données du formulaire.
+        // Si l'URL est vide ou invalide et transformée en null par Yup, ce sera null.
+        imageUrl: data.imageUrl, 
+      };
 
-    // --- Interaction avec Firestore --- 
-    try {
-        // Si on est en mode édition...
-        if (isEditing) {
-            console.log(`Mise à jour de la recette ID: ${recipeToEdit.id}`);
-            // Référence au document existant dans Firestore
-            const recipeRef = doc(db, 'recettes', recipeToEdit.id);
-            // Appel à `updateDoc` pour mettre à jour les données
-            await updateDoc(recipeRef, {
-                ...recipeData, // Les nouvelles données du formulaire
-                // Met à jour le champ `updatedAt` avec l'heure actuelle du serveur Firestore
-                updatedAt: serverTimestamp() 
-            });
-            console.log("Recette mise à jour avec succès.");
-            // Redirige l'utilisateur vers la page détail de la recette modifiée
-            router.push(`/recette/${recipeToEdit.id}`);
-        } else {
-            // Si on est en mode ajout...
-            console.log("Ajout d'une nouvelle recette...");
-            // Appel à `addDoc` pour ajouter un nouveau document à la collection 'recettes'
-            const docRef = await addDoc(collection(db, "recettes"), {
-                ...recipeData, // Les données du formulaire
-                // Ajoute les champs `createdAt` et `updatedAt` avec l'heure du serveur Firestore
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp()
-            });
-            console.log("Recette ajoutée avec succès, ID: ", docRef.id);
-            
-            // Optionnel: réinitialiser le formulaire après l'ajout réussi
-            reset(); 
-            
-            // Rediriger vers la page d'accueil (ou une autre page de confirmation)
-            router.push('/'); 
-        }
+      // --- 3. Écriture/Mise à jour dans Firestore ---
+      if (isEditing) {
+        console.log(`Mise à jour Firestore pour ID: ${recipeToEdit.id}`);
+        const recipeRef = doc(db, 'recettes', recipeToEdit.id);
+        await updateDoc(recipeRef, {
+          ...recipeData,
+          updatedAt: serverTimestamp()
+        });
+        console.log("Mise à jour Firestore réussie.");
+        router.push(`/recette/${recipeToEdit.id}`);
+      } else {
+        console.log("Ajout Firestore...");
+        const docRef = await addDoc(collection(db, "recettes"), {
+          ...recipeData,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+        console.log("Ajout Firestore réussi, ID:", docRef.id);
+        reset(); // Réinitialise le formulaire (y compris le champ URL)
+        router.push('/'); 
+      }
+
     } catch (error) {
-        // En cas d'erreur lors de l'écriture dans Firestore
-        console.error("Erreur lors de l'enregistrement dans Firestore: ", error);
-        setFormError("Une erreur est survenue lors de l'enregistrement. Veuillez réessayer.");
-        setLoading(false); // Important : Arrêter le chargement en cas d'erreur pour réactiver le bouton
+      // Gère les erreurs (soit de l'upload, soit de Firestore)
+      console.error("Erreur lors de la soumission du formulaire:", error);
+      // Affiche l'erreur spécifique à l'image si elle existe, sinon une erreur générale
+      setFormError(error.message || "Une erreur est survenue lors de l'enregistrement. Veuillez réessayer.");
+      setLoading(false); // Important: arrêter le chargement
     }
-    // Note: setLoading(false) n'est pas nécessaire ici en cas de succès car la redirection a lieu.
+    // setLoading(false) géré dans le catch et implicitement par la redirection en cas de succès
   };
 
   // --- Rendu JSX du Formulaire --- 
@@ -233,8 +259,40 @@ function RecipeForm({ recipeToEdit = null }) {
         )}
       </div>
       
-      {/* --- Section pour l'Upload d'Image (future étape) --- */}
-      {/* TODO: Ajouter ici le champ et la logique pour l'upload d'image (Étape 9) */}
+      {/* --- Champ URL Image --- */}
+      <div>
+        <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700 mb-1">
+          URL de l'image (Optionnel)
+        </label>
+        <input 
+          type="url" // Type sémantique pour URL
+          id="imageUrl"
+          {...register('imageUrl')} // Enregistre le champ
+          className={`border ${errors.imageUrl ? 'border-red-500' : 'border-gray-300'} rounded-lg p-2 w-full focus:ring-1 focus:ring-primary focus:border-primary`}
+          placeholder="https://exemple.com/image.jpg" // Placeholder pour guider l'utilisateur
+          aria-invalid={errors.imageUrl ? "true" : "false"}
+        />
+        {/* Affichage de l'erreur de validation pour l'URL */}
+        {errors.imageUrl && (
+          <p className="mt-1 text-xs text-red-600" role="alert">{errors.imageUrl.message}</p>
+        )}
+        
+        {/* Affichage de l'aperçu basé sur la valeur actuelle de l'URL */}
+        {/* On utilise imageUrlValue (de useWatch) pour l'aperçu en temps réel */}
+        {imageUrlValue && !errors.imageUrl && ( // Affiche seulement si une URL valide est présente
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-700 mb-1">Aperçu :</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */} 
+            <img 
+              src={imageUrlValue} 
+              alt="Aperçu de l'image depuis l'URL fournie" 
+              className="max-w-xs max-h-48 object-cover rounded-lg shadow"
+              // Ajout d'un gestionnaire d'erreur simple pour l'image elle-même
+              onError={(e) => { e.target.style.display = 'none'; /* Cache l'image si elle ne charge pas */ }}
+            />
+          </div>
+        )}
+      </div>
       
       {/* --- Bouton de soumission --- */}
       <div className="flex justify-end"> {/* Aligne le bouton à droite */}
@@ -247,10 +305,13 @@ function RecipeForm({ recipeToEdit = null }) {
         >
            {/* Affiche une icône de chargement si `loading` est vrai */}
            {loading ? (
-            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
+            <>
+              <svg className="animate-spin -ml-1 mr-3 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {isEditing ? 'Mise à jour...' : 'Ajouter la recette'}
+            </>
           ) : (
             // Affiche le texte approprié selon si on est en mode édition ou ajout
             isEditing ? 'Mettre à jour' : 'Ajouter la recette'
