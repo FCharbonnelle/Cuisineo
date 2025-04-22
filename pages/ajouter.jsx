@@ -9,6 +9,12 @@ import { getAllLocalRecipes } from '@/services/localRecipes';
 
 const LOCAL_STORAGE_IMPORT_FLAG = 'cuisineo_firestore_imported';
 
+/**
+ * Page pour ajouter une nouvelle recette.
+ * - Protégée : nécessite d\'être connecté.
+ * - Gère l\'import initial des recettes depuis localStorage vers Firestore la première fois.
+ * - Affiche le composant RecipeForm.
+ */
 function AjouterRecettePage() {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -26,30 +32,35 @@ function AjouterRecettePage() {
       
       const importDone = localStorage.getItem(LOCAL_STORAGE_IMPORT_FLAG);
       if (importDone) {
+        console.log("Import Firestore déjà effectué (flag trouvé).");
         setImportStatus('done');
-        return; 
+        return;
       }
 
       setImportStatus('checking');
+      console.log("Vérification de Firestore pour l'import initial...");
       try {
         const recipesRef = collection(db, 'recettes');
         const q = query(recipesRef, limit(1));
         const snapshot = await getDocs(q);
 
         if (snapshot.empty) {
+          console.log("Firestore est vide. Tentative d'import depuis localStorage...");
           setImportStatus('importing');
+          
           const localRecipes = getAllLocalRecipes();
 
           if (localRecipes && localRecipes.length > 0) {
+            console.log(`Import de ${localRecipes.length} recettes depuis localStorage vers Firestore...`);
             const batch = writeBatch(db);
 
             localRecipes.forEach(recipe => {
               const newRecipeRef = doc(collection(db, 'recettes'));
               batch.set(newRecipeRef, {
-                nom: recipe.nom,
-                categorie: recipe.categorie,
-                ingredients: recipe.ingredients,
-                etapes: recipe.etapes,
+                nom: recipe.nom || 'Sans nom',
+                categorie: recipe.categorie || 'plat',
+                ingredients: recipe.ingredients || [],
+                etapes: recipe.etapes || '',
                 imageUrl: recipe.imageUrl || null,
                 userId: user.uid,
                 createdAt: serverTimestamp(),
@@ -58,22 +69,24 @@ function AjouterRecettePage() {
             });
 
             await batch.commit();
-            console.log('Import initial de localStorage vers Firestore terminé !');
+            console.log('Import initial de localStorage vers Firestore terminé avec succès !');
+            
             localStorage.setItem(LOCAL_STORAGE_IMPORT_FLAG, 'true');
             localStorage.removeItem('cuisineo_recettes');
+            
             setImportStatus('done');
           } else {
-            console.log('localStorage est vide, pas d\'import nécessaire.');
+            console.log('localStorage est vide, aucun import nécessaire.');
             localStorage.setItem(LOCAL_STORAGE_IMPORT_FLAG, 'true');
             setImportStatus('done');
           }
         } else {
-          console.log('Firestore contient déjà des recettes, pas d\'import nécessaire.');
+          console.log('Firestore contient déjà des recettes, aucun import nécessaire.');
           localStorage.setItem(LOCAL_STORAGE_IMPORT_FLAG, 'true');
           setImportStatus('done');
         }
       } catch (error) {
-        console.error("Erreur lors de la vérification/import Firestore :", error);
+        console.error("Erreur grave lors de la vérification/import Firestore :", error);
         setImportStatus('error');
       }
     }
@@ -82,15 +95,15 @@ function AjouterRecettePage() {
   }, [user, authLoading]);
 
   if (authLoading || importStatus === 'checking' || importStatus === 'importing') {
-    return <p className="text-center mt-10">Chargement...</p>;
+    return <p className="text-center mt-10">Préparation du formulaire...</p>;
   }
   
   if (!user) {
-     return <p className="text-center mt-10">Veuillez vous connecter.</p>; 
+     return <p className="text-center mt-10">Veuillez vous connecter pour ajouter une recette.</p>; 
   }
   
   if (importStatus === 'error') {
-     return <p className="text-center mt-10 text-red-500">Erreur lors de la préparation du formulaire.</p>;
+     return <p className="text-center mt-10 text-red-500">Erreur lors de la préparation du formulaire. Vérifiez votre connexion ou réessayez.</p>;
   }
 
   return (

@@ -6,6 +6,11 @@ import Link from 'next/link'; // Pour un éventuel bouton retour
 import { getRecipeById } from '../../services/recipesAPI';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid'; // Icône retour
 
+/**
+ * Page dynamique pour afficher les détails d'une recette spécifique.
+ * L'ID de la recette est extrait de l'URL (ex: /recette/mon-id-recette).
+ * Récupère les données de la recette depuis Firestore et les affiche.
+ */
 function RecipeDetailPage() {
   const router = useRouter();
   const { id } = router.query; // Récupère l'ID depuis l'URL
@@ -15,28 +20,36 @@ function RecipeDetailPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Assurez-vous que l'ID est disponible avant de fetcher
-    if (id) {
+    // `router.query` peut être vide au premier rendu, donc on vérifie si `id` existe.
+    // On vérifie aussi que `id` n'est pas un tableau (peut arriver dans certains cas avec Next.js)
+    if (id && typeof id === 'string') {
+      console.log(`Tentative de chargement de la recette avec ID: ${id}`);
+      // Fonction asynchrone pour charger les données
       async function loadRecipe() {
+        setIsLoading(true); // Début du chargement
+        setError(null);     // Réinitialiser l'erreur
         try {
-          setIsLoading(true);
+          // Appel à la fonction API pour récupérer la recette par son ID
           const data = await getRecipeById(id);
+          // Si la fonction retourne des données (la recette existe)...
           if (data) {
-            setRecipe(data);
-            setError(null);
+            setRecipe(data); // ...mettre à jour l'état `recipe`
           } else {
-            // Gérer le cas où la recette n'existe pas
-            setRecipe(null);
-            setError('Recette non trouvée.');
+            // Si la fonction retourne null (recette non trouvée dans Firestore)...
+            setRecipe(null); // ...s'assurer que l'état `recipe` est null
+            setError('Recette non trouvée.'); // ...et définir un message d'erreur spécifique
           }
         } catch (err) {
+          // En cas d'erreur lors de l'appel API (ex: problème réseau, erreur Firestore)
           console.error("Erreur lors du chargement de la recette:", err);
-          setError("Impossible de charger la recette.");
+          setError("Impossible de charger les détails de la recette. Veuillez réessayer.");
           setRecipe(null);
         } finally {
+          // Dans tous les cas (succès ou erreur), arrêter le chargement
           setIsLoading(false);
         }
       }
+      // Exécuter la fonction de chargement
       loadRecipe();
     }
   }, [id]); // Ré-exécute l'effet si l'ID change
@@ -50,8 +63,8 @@ function RecipeDetailPage() {
   if (error) {
     return (
       <div className="text-center mt-10">
-        <p className="text-red-500">{error}</p>
-        <Link href="/" className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        <p className="text-red-500 mb-4">{error}</p>
+        <Link href="/" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
           <ArrowLeftIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
           Retour à l'accueil
         </Link>
@@ -71,7 +84,7 @@ function RecipeDetailPage() {
     <>
       <Head>
         <title>{recipe.nom} - Cuisineo</title>
-        <meta name="description" content={`Découvrez la recette de ${recipe.nom}`} />
+        <meta name="description" content={`Découvrez la recette de ${recipe.nom} : ${recipe.ingredients.slice(0, 3).join(', ')}...`} />
       </Head>
 
       <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
@@ -87,10 +100,11 @@ function RecipeDetailPage() {
         <div className="relative w-full h-64 md:h-96"> {/* Hauteur plus grande pour détail */}
             <Image
                 src={imageUrl}
-                alt={recipe.nom}
+                alt={`Image de ${recipe.nom}`}
                 layout="fill"
                 objectFit="cover"
                 unoptimized={imageUrl.startsWith('/')} // Pour les images locales
+                priority // Indique à Next.js de charger cette image en priorité (car c'est l'élément visuel principal)
             />
         </div>
 
