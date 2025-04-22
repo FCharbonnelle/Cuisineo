@@ -3,8 +3,8 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link'; // Pour un éventuel bouton retour
-import { getRecipeById } from '../../services/recipesAPI';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid'; // Icône retour
+import { getRecipeById } from '@/services/recipesAPI';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 /**
  * Page dynamique pour afficher les détails d'une recette spécifique.
@@ -20,43 +20,35 @@ function RecipeDetailPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // `router.query` peut être vide au premier rendu, donc on vérifie si `id` existe.
-    // On vérifie aussi que `id` n'est pas un tableau (peut arriver dans certains cas avec Next.js)
-    if (id && typeof id === 'string') {
-      console.log(`Tentative de chargement de la recette avec ID: ${id}`);
-      // Fonction asynchrone pour charger les données
-      async function loadRecipe() {
-        setIsLoading(true); // Début du chargement
-        setError(null);     // Réinitialiser l'erreur
+    // Vérifie si le router est prêt et si l'ID existe
+    if (router.isReady && id) {
+      async function fetchRecipe() {
+        console.log(`Chargement de la recette ID: ${id}`);
+        setIsLoading(true);
+        setError(null);
         try {
-          // Appel à la fonction API pour récupérer la recette par son ID
           const data = await getRecipeById(id);
-          // Si la fonction retourne des données (la recette existe)...
           if (data) {
-            setRecipe(data); // ...mettre à jour l'état `recipe`
+            setRecipe(data);
+            console.log("Recette chargée:", data.nom);
           } else {
-            // Si la fonction retourne null (recette non trouvée dans Firestore)...
-            setRecipe(null); // ...s'assurer que l'état `recipe` est null
-            setError('Recette non trouvée.'); // ...et définir un message d'erreur spécifique
+            setRecipe(null); // Recette non trouvée
+            console.log("Aucune recette trouvée pour cet ID.");
           }
         } catch (err) {
-          // En cas d'erreur lors de l'appel API (ex: problème réseau, erreur Firestore)
           console.error("Erreur lors du chargement de la recette:", err);
-          setError("Impossible de charger les détails de la recette. Veuillez réessayer.");
-          setRecipe(null);
+          setError("Impossible de charger les détails de la recette.");
         } finally {
-          // Dans tous les cas (succès ou erreur), arrêter le chargement
           setIsLoading(false);
         }
       }
-      // Exécuter la fonction de chargement
-      loadRecipe();
+      fetchRecipe();
     }
-  }, [id]); // Ré-exécute l'effet si l'ID change
+  }, [id, router.isReady]); // Dépendances: id et router.isReady
 
   // Affichage pendant le chargement
   if (isLoading) {
-    return <p className="text-center text-gray-500 mt-10">Chargement de la recette...</p>;
+    return <p className="text-center mt-10">Chargement de la recette...</p>;
   }
 
   // Affichage en cas d'erreur (y compris recette non trouvée)
@@ -83,60 +75,68 @@ function RecipeDetailPage() {
   return (
     <>
       <Head>
-        <title>{recipe.nom} - Cuisineo</title>
-        <meta name="description" content={`Découvrez la recette de ${recipe.nom} : ${recipe.ingredients.slice(0, 3).join(', ')}...`} />
+        <title>{`${recipe.nom} - Détails de la recette - Cuisineo`}</title>
+        <meta name="description" content={`Découvrez la recette détaillée de ${recipe.nom} sur Cuisineo, incluant ingrédients et étapes de préparation.`} />
       </Head>
 
-      <div className="max-w-4xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
-        {/* Bouton Retour */}
-        <div className="p-4 border-b">
-            <Link href="/" className="inline-flex items-center text-sm text-primary hover:text-primary-dark font-medium">
-                <ArrowLeftIcon className="mr-2 h-5 w-5" aria-hidden="true" />
-                Retour à la liste
-            </Link>
-        </div>
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Bouton Retour */} 
+        <Link href="/" 
+          className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6 group">
+            <ArrowLeftIcon className="h-5 w-5 mr-2 transition-transform duration-150 ease-in-out group-hover:-translate-x-1" />
+            Retour à l'accueil
+        </Link>
 
-        {/* Image */}
-        <div className="relative w-full h-64 md:h-96"> {/* Hauteur plus grande pour détail */}
-            <Image
-                src={imageUrl}
+        {/* Contenu de la recette */} 
+        <article className="bg-white p-6 md:p-8 shadow-lg rounded-lg">
+          {/* Image (si disponible) */} 
+          {recipe.imageUrl && (
+            <div className="relative w-full h-64 md:h-96 mb-6 rounded-lg overflow-hidden">
+              <Image
+                src={imageUrl} // Utilise la variable imageUrl définie plus haut
                 alt={`Image de ${recipe.nom}`}
                 layout="fill"
                 objectFit="cover"
-                unoptimized={imageUrl.startsWith('/')} // Pour les images locales
-                priority // Indique à Next.js de charger cette image en priorité (car c'est l'élément visuel principal)
-            />
-        </div>
-
-        <div className="p-6">
-            {/* Catégorie et Nom */}
-            <span className="inline-block bg-primary-light text-primary-dark text-xs font-semibold px-2 py-1 rounded-full mb-2 capitalize">
-                {recipe.categorie}
-            </span>
-            <h1 className="text-3xl font-bold mb-4 text-gray-900">{recipe.nom}</h1>
-
-            {/* Sections Ingrédients et Étapes */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
-                {/* Ingrédients */}
-                <div className="md:col-span-1">
-                    <h2 className="text-xl font-semibold mb-3 text-gray-800 border-b pb-2">Ingrédients</h2>
-                    <ul className="list-disc list-inside space-y-1 text-gray-700">
-                        {recipe.ingredients.map((ingredient, index) => (
-                            <li key={index}>{ingredient}</li>
-                        ))}
-                    </ul>
-                </div>
-
-                {/* Étapes */}
-                <div className="md:col-span-2">
-                    <h2 className="text-xl font-semibold mb-3 text-gray-800 border-b pb-2">Préparation</h2>
-                    {/* Affichage simple pour l'instant. Pourrait utiliser react-markdown plus tard */}
-                    <div className="prose prose-sm max-w-none text-gray-700 whitespace-pre-line">
-                        {recipe.etapes}
-                    </div>
-                </div>
+                className=""
+                unoptimized={imageUrl.startsWith('/')} // Désactive optimisation pour placeholders locaux
+              />
             </div>
-        </div>
+          )}
+
+          {/* Catégorie */} 
+          <span className="inline-block bg-orange-100 text-orange-700 text-sm font-semibold px-3 py-1 rounded-full mb-4 capitalize">
+            {recipe.categorie}
+          </span>
+
+          {/* Titre */} 
+          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-gray-900">{recipe.nom}</h1>
+
+          {/* Section Ingrédients */} 
+          <section className="mb-8">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800 border-b pb-2">Ingrédients</h2>
+            <ul className="list-disc list-inside space-y-2 pl-2 text-gray-700">
+              {/* Map sur le tableau des ingrédients */}
+              {recipe.ingredients && recipe.ingredients.map((ingredient, index) => (
+                <li key={index}>{ingredient}</li>
+              ))}
+              {/* Message si le tableau est vide ou absent */}
+              {(!recipe.ingredients || recipe.ingredients.length === 0) && (
+                <li className="text-gray-500 italic">Aucun ingrédient listé.</li>
+              )}
+            </ul>
+          </section>
+
+          {/* Section Étapes */} 
+          <section>
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800 border-b pb-2">Préparation</h2>
+            {/* Affiche les étapes. 
+               Utilise `whitespace-pre-line` pour respecter les sauts de ligne 
+               entrés dans le textarea lors de la création. */}
+            <div className="prose max-w-none text-gray-700 whitespace-pre-line">
+               {recipe.etapes || <p className="italic text-gray-500">Aucune étape de préparation fournie.</p>}
+            </div>
+          </section>
+        </article>
       </div>
     </>
   );
