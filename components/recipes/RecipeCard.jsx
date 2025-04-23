@@ -48,10 +48,10 @@ function RecipeCard({ recipe, onEdit, onDelete }) {
 
   // --- Rendu JSX --- 
   return (
-    // Conteneur principal - Ajout d'une bordure pour meilleure délimitation
-    <div className="bg-white shadow-md rounded-xl overflow-hidden flex flex-col h-full group border border-gray-200">
+    // Conteneur principal - Ombre marquée, coins arrondis, BORDURE IDENTIQUE AU FORMULAIRE (1px, gray-400).
+    <div className="bg-white shadow-xl rounded-lg overflow-hidden flex flex-col h-full group border border-gray-400 transition duration-200 ease-in-out hover:shadow-2xl">
       {/* Image cliquable menant au détail */} 
-      <Link href={`/recette/${recipe.id}`} className="block relative w-full h-48">
+      <Link href={`/recette/${recipe.id}`} className="block relative w-full h-48 overflow-hidden">
         {/* Composant Image de Next.js pour l'optimisation */}
         <Image
           src={imageUrl}

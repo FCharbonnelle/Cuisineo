@@ -176,7 +176,7 @@ function RecipeForm({ recipeToEdit = null }) {
   // --- Rendu JSX du Formulaire --- 
   return (
     // Utilise handleSubmit pour lier la fonction onSubmit à l'événement de soumission du formulaire
-    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6 bg-white p-6 shadow rounded-lg">
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-6 bg-white p-6 shadow rounded-lg border border-gray-400">
       
       {/* Affichage de l'erreur générale du formulaire (si elle existe) */}
       {formError && (
@@ -299,15 +299,16 @@ function RecipeForm({ recipeToEdit = null }) {
         <button
           type="submit"
           disabled={loading}
-          // Style conditionnel basé sur isEditing
-          className={`bg-primary hover:bg-primary-dark font-semibold rounded-lg py-3 px-6 shadow-md hover:shadow-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center border border-primary-dark 
-            ${isEditing ? 'text-black' : 'text-white'}` // Texte noir si édition, blanc si ajout
+          // Style du bouton: Fond primaire, hover plus foncé.
+          // Suppression de la couleur de texte conditionnelle, application de text-black toujours.
+          className={`bg-primary hover:bg-primary-dark text-black font-semibold rounded-lg py-3 px-6 shadow-md hover:shadow-lg duration-150 disabled:opacity-50 disabled:cursor-not-allowed flex items-center border border-primary-dark`
+            // ${isEditing ? 'text-black' : 'text-white'} // Ancienne ligne conditionnelle supprimée
           }
         >
            {loading ? (
             <>
-              {/* Icône de chargement: couleur conditionnelle */}
-              <svg className={`animate-spin -ml-1 mr-3 h-5 w-5 ${isEditing ? 'text-black' : 'text-white'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              {/* Icône de chargement: couleur toujours noire */}
+              <svg className={`animate-spin -ml-1 mr-3 h-5 w-5 text-black`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>

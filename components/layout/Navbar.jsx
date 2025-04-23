@@ -47,8 +47,8 @@ function Navbar() {
   const logoutButtonClasses = "flex items-center px-3 py-1 rounded-md bg-orange-100 border border-orange-200 text-orange-800 hover:bg-red-100 hover:border-red-300 hover:text-red-700 transition-colors duration-150 shadow-sm";
 
   return (
-    // Header plus large (h-20) et style Navbar
-    <nav className="bg-white border-b border-gray-200 h-20 flex items-center sticky top-0 z-10 shadow-sm">
+    // Navbar: fond BLANC, bordure inférieure GRISE MOYENNE (400), ombre légère, sticky.
+    <nav className="bg-white border-b border-gray-400 h-20 flex items-center sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 flex items-center">
         
         <Link href="/" className="text-2xl font-semibold text-gray-900 hover:text-primary transition-colors mr-auto">

@@ -88,7 +88,7 @@ function RecipeDetailPage() {
         </Link>
 
         {/* Contenu de la recette */} 
-        <article className="bg-white p-6 md:p-8 shadow-lg rounded-lg">
+        <article className="bg-white p-6 md:p-8 shadow-lg rounded-lg border border-gray-400">
           {/* Image (si disponible) */} 
           {recipe.imageUrl && (
             <div className="relative w-full h-64 md:h-96 mb-6 rounded-lg overflow-hidden">

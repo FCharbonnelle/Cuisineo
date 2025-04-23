@@ -107,7 +107,7 @@ function AuthForm() {
   // --- Rendu JSX du Formulaire --- 
   return (
     // Conteneur principal du formulaire avec styles Tailwind
-    <div className="max-w-md mx-auto mt-10 bg-white p-8 shadow-lg rounded-lg">
+    <div className="max-w-md mx-auto mt-10 bg-white p-8 shadow-lg rounded-lg border border-gray-400">
       {/* Titre dynamique (Connexion ou Inscription) */}
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
         {isLogin ? 'Connexion' : 'Inscription'}
